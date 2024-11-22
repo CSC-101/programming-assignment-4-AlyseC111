@@ -2,7 +2,7 @@ import sys
 import build_data
 
 
-#Helper function
+#Helper function that intakes the field from the line, and returns a list with the key and attribute
 def field_split(field):
     if isinstance(field, str):
         split = field.split(".")
@@ -11,7 +11,7 @@ def field_split(field):
         return field
 
 
-
+#Prints the county information for each county in 'data' into the terminal in a user-friendly format
 def display(data):
     for i in data:
         print(i.county, ", " + i.state, "\n", "\t", "Population: ",  i.population['2014 Population'])
@@ -20,6 +20,7 @@ def display(data):
         print("\t Ethnicity Percentages: \n \t\t American Indian and Alaska Native: ", i.ethnicities['American Indian and Alaska Native Alone'], "\n \t\t Asian Alone: ", i.ethnicities['Asian Alone'], "\n \t\t Black Alone: ", i.ethnicities['Black Alone'], "\n \t\t Hispanic or Latino: ", i.ethnicities['Hispanic or Latino'], "\n \t\t Native Hawaiian and Other Pacific Islander Alone: ", i.ethnicities['Native Hawaiian and Other Pacific Islander Alone'], "\n \t\t Two or More Races: ", i.ethnicities['Two or More Races'], "\n \t\t White Alone: ", i.ethnicities['White Alone'], "\n \t\t White Alone, not Hispanic or Latino: ", i.ethnicities['White Alone, not Hispanic or Latino'])
         print("\t Age: \n \t\t Median Household: ", i.income['Median Houseold Income'], "\n \t\t Per Capita: ", i.income['Per Capita Income'], "\n \t\t Below Poverty Level: ", i.income['Persons Below Poverty Level'],)
 
+#Filters through 'data' and returns a list of all the counties whose state matches the input state.
 def filter_state(data, state):
     filtered = []
     for i in data:
@@ -27,6 +28,7 @@ def filter_state(data, state):
             filtered.append(i)
     return filtered
 
+#Returns a list of all the counties where the population of the specified field is greater than the input number
 def filter_gt(data, field, number):
     field = field_split(field)
     filtered = []
@@ -44,6 +46,7 @@ def filter_gt(data, field, number):
                 filtered.append(i)
     return filtered
 
+#Returns a list of all the counties where the population of the specified field is less than the input number
 def filter_lt(data, field, number):
     field = field_split(field)
     filtered = []
@@ -60,13 +63,14 @@ def filter_lt(data, field, number):
             if i.income[field[1]] < number:
                 filtered.append(i)
     return filtered
-
+#Prints to the terminal the total 2014 population across all current counties in 'data'
 def population_total(data):
     total = 0
     for i in data:
         total += i.population['2014 Population']
     return total
 
+#Returns the total population of the specified field for all the counties in 'data'
 def population(data, field):
     field = field_split(field)
     att = field[0]
@@ -80,12 +84,13 @@ def population(data, field):
             sub_pop += (i.income[field[1]] / 100) * i.population["2014 Population"]
     return round(sub_pop, 2)
 
+#Prints the percentage of the total population within the sub-population specified by 'field' for the counties in 'data'
 def percent(data, field):
     field = field_split(field)
     perc = round(population(data, field) / population_total(data) * 100, 2)
     return perc
 
-
+#Executes the correct function based on the input line, with the dataset specified by the input 'data'
 def operations(line, data):
     line = line.rstrip("\n")
     x = line.split(":")
